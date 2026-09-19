@@ -5,6 +5,7 @@ import os
 import shutil
 import ffmpeg
 from typing import Callable, Self
+
 STANDARD_FILE_EXTENSION: str = ".ogg"
 is_standard_filetype: Callable[[str],bool] = lambda file_path: \
     realpath(file_path).endswith(STANDARD_FILE_EXTENSION)
@@ -89,7 +90,7 @@ class Song_Cache:
             if os.path.isfile(cache_file_path):
                 ...
             else:
-                wait_list.append(Song_Cache.convert_async(realpath(file_path), cache_file_path))
+                Song_Cache.convert_async(realpath(file_path), cache_file_path)
                 
             self.songs[realpath(file_path)] =  cache_file_path
             

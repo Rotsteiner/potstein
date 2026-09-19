@@ -42,6 +42,19 @@ def shuffle(sequence: list[Any]) :
 class Playlist_fetcher:
     songs_path: str
     music_extensions: list[str] = field(default_factory=lambda: [".ogg", ".mp3", ".mp4", ".opus"])
+    async def proccess_song_list(self):
+        # get realpath, get .opus as songs, create songlist
+        real_songs_path: str = os.path.realpath(self.songs_path)
+        song_name_list = listdir_with_file_ending(real_songs_path,
+                                                  self.music_extensions)
+        song_path_list = map(lambda song_name: os.path.join(real_songs_path, song_name),
+                             song_name_list)
+        songs_paths = [Song_Cache().add_song_path(song_path),os.path.basename(song_path) for song_path in song_path_list]
+        for song_path in song_paths:
+            await song_path
+        return songs_paths
+
+
 
     def song_list(self):
         # get realpath, get .opus as songs, create songlist
