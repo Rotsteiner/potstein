@@ -21,6 +21,9 @@ class Player:
             Playlist.Playlist_Factory.New_Sorted(self.playlist_path)
         self.volume = 1
         self.init_pygame_song()
+
+        from dbus_mpris import mpris_dbus_start
+        mpris_dbus_start(self)
     def set_volume(self, value):
         if value < 0:
             raise ValueError("Volume cannot be less than zero")
@@ -74,6 +77,19 @@ class Player:
         while self.running:
             self.songoptions.update_draw(self.song_seconds, self.song_length)
             self.update(stdscr)
+    def play(self):
+        self.songoptions.resume()
+        self.song_is_paused = False 
+        pygame.mixer.music.unpause()
+    def stop(self):
+        self.songoptions.pause()
+        self.song_is_paused = True 
+        pygame.mixer.music.pause()
+    def playpause(self):
+        if self.song_is_paused:
+            self.play()
+        else: 
+            self.stop()
 
 
     def update(self, stdscr: curses.window):
@@ -90,14 +106,7 @@ class Player:
 
         key = stdscr.getch()
         if key == ord(" "):
-            if self.song_is_paused:
-                self.songoptions.resume()
-                self.song_is_paused = False 
-                pygame.mixer.music.unpause()
-            else: 
-                self.songoptions.pause()
-                self.song_is_paused = True 
-                pygame.mixer.music.pause()
+            self.playpause()
         if key == ord("q"):
             sys.exit(0)
         if key == ord(">"):

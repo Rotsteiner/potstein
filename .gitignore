@@ -1,0 +1,10 @@
+song_cache/*
+__pycache__/
+__pycache__/*
+venv/*
+instance/*
+migrations/*
+__pycache__/*
+*/__pycache__/*
+__pycache__/
+*.pyc

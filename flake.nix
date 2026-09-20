@@ -17,6 +17,7 @@
         pythonEnv = python.withPackages (ps: with ps; [
           pygame
           ffmpeg-python
+          dbus-next
         ]);
       in
       {
