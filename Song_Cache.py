@@ -80,6 +80,7 @@ class Song_Cache:
                 lambda x: self.convert(x[0],x[1])
                 , self.promised_song_paths)
                  ) # list() forces it to not be lazy
+            self.promised_song_paths = [] # nothing is promised anymore 
 
             
     def add_song_path(self, file_path: str) -> str:
