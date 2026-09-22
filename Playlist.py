@@ -29,7 +29,7 @@ listdir_with_file_ending: Callable[[str, List[str]], List[str]] = \
                 ))
 
 def shuffle(sequence: list[Any]) :
-    new_list= [i for i in range(len(sequence))]
+    new_list= list(range(len(sequence)))
     random.shuffle(new_list)
     for Index, item in enumerate(new_list):
         new_list[Index] = sequence[item]
@@ -50,7 +50,15 @@ class Playlist_fetcher:
                                                   self.music_extensions)
         song_path_list = map(lambda song_name: os.path.join(real_songs_path, song_name),
                              song_name_list)
-        songs = [Song(Song_Cache().add_song_path(song_path),os.path.basename(song_path)) for song_path in song_path_list]
+
+        get_song_from_song_path: Callable[[str], Song] = lambda song_path: \
+            Song(Song_Cache().promise_to_add_song_path(song_path),os.path.basename(song_path))
+            #Song(Song_Cache().add_song_path(song_path),os.path.basename(song_path))
+        
+        songs = list(map(get_song_from_song_path, song_path_list))
+
+
+        Song_Cache().fulfill_promised_song_paths() # important because the files may not be converted already
         return songs
 
     def song_list_sorted(self):

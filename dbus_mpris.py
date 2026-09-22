@@ -329,7 +329,7 @@ class MediaPlayer2Player(ServiceInterface):
 
     @method()
     def Play(self):
-        print("MPRIS: Play", flush=True)
+        #print("MPRIS: Play", flush=True)
 
         # Your Player.play() already has the intended semantics.
         self.player.play()
@@ -338,7 +338,7 @@ class MediaPlayer2Player(ServiceInterface):
 
     @method()
     def Pause(self):
-        print("MPRIS: Pause", flush=True)
+        #print("MPRIS: Pause", flush=True)
 
         # Your Player.stop() intentionally means pause.
         self.player.stop()
@@ -347,7 +347,7 @@ class MediaPlayer2Player(ServiceInterface):
 
     @method()
     def PlayPause(self):
-        print("MPRIS: PlayPause", flush=True)
+        #print("MPRIS: PlayPause", flush=True)
 
         self.player.playpause()
 
@@ -355,7 +355,7 @@ class MediaPlayer2Player(ServiceInterface):
 
     @method()
     def Stop(self):
-        print("MPRIS: Stop", flush=True)
+        #print("MPRIS: Stop", flush=True)
 
         # Keep your Player semantics unchanged.
         self.player.stop()
@@ -364,7 +364,7 @@ class MediaPlayer2Player(ServiceInterface):
 
     @method()
     def Next(self):
-        print("MPRIS: Next", flush=True)
+        #print("MPRIS: Next", flush=True)
 
         self.player.start_next_song()
 
@@ -372,7 +372,7 @@ class MediaPlayer2Player(ServiceInterface):
 
     @method()
     def Previous(self):
-        print("MPRIS: Previous", flush=True)
+        #print("MPRIS: Previous", flush=True)
 
         self.player.start_previous_song()
 

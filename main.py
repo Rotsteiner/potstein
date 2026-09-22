@@ -1,3 +1,4 @@
+
 import curses
 import time
 from curses.textpad import rectangle
@@ -5,9 +6,9 @@ from SongOptions import *
 import pygame
 import sys
 import os
-import Playlist
 from Song_Cache import Song_Cache
 Song_Cache(".")
+import Playlist
 
 not_bellow_zero = lambda x: x if x >= 0 else 0
 class Player:
@@ -156,6 +157,7 @@ class Player:
     def run(self):
         render_func = self.init_scr_context
         curses.wrapper(render_func)
-        
-p = Player()
-p.run()
+   
+if __name__ == "__main__":
+    p = Player()
+    p.run()
