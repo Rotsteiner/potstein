@@ -42,7 +42,7 @@ def shuffle(sequence: list[Any]) :
 @dataclass(frozen=True)
 class Playlist_fetcher:
     songs_path: str
-    music_extensions: list[str] = field(default_factory=lambda: [STANDARD_FILE_EXTENSION, ".mp3", ".mp4", ".opus", ".mkv"])
+    music_extensions: list[str] = field(default_factory=lambda: list(set([STANDARD_FILE_EXTENSION, ".mp3", ".mp4", ".opus", ".mkv"])))
     def song_list(self):
         # get realpath, get .opus as songs, create songlist
         real_songs_path: str = os.path.realpath(self.songs_path)

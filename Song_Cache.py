@@ -7,6 +7,7 @@ import os
 import shutil
 import ffmpeg
 from typing import Callable, Self
+import multiprocessing 
 
 STANDARD_FILE_EXTENSION: str = ".ogg"
 is_standard_filetype: Callable[[str],bool] = lambda file_path: \
@@ -74,7 +75,7 @@ class Song_Cache:
         return self.songs[realpath(file_path)]
 
     def fulfill_promised_song_paths(self)-> None:
-        with ThreadPool(8) as p:
+        with ThreadPool(multiprocessing.cpu_count()) as p:
             list(p.imap_unordered(
                 lambda x: self.convert(x[0],x[1])
                 , self.promised_song_paths)
