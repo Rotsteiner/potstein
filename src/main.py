@@ -8,12 +8,13 @@ import os
 from Song_Cache import Song_Cache
 Song_Cache(".")
 import Playlist
-
+from config import CONFIG
 not_bellow_zero = lambda x: x if x >= 0 else 0
 class Player:
     def __init__(self) -> None:
         pygame.mixer.init()
-
+        self.songoptions_width = 19
+        self.songoptions_height = 10
         self.running = True
         self.song_is_paused = False
         self.playlist_path = sys.argv[1]
@@ -54,7 +55,7 @@ class Player:
             pygame.mixer.music.pause()
     def init_songoptions(self,):
         self.songoptions = SongOptions(self.playlist.current.name
-                                       ,self.song_is_paused, not self.song_is_paused,19,10,curses.LINES, curses.COLS)
+                                       ,self.song_is_paused, not self.song_is_paused,self.songoptions_width,self.songoptions_height,curses.LINES, curses.COLS)
     def init_scr_context(self, stdscr: curses.window):
         self.init_curses()
         stdscr.nodelay(True)
@@ -75,6 +76,7 @@ class Player:
         self.update(stdscr)
         #stdscr.clear()
         while self.running:
+            self.songoptions.calculate_dimensions(self.songoptions_width, self.songoptions_height, *(stdscr.getmaxyx()))
             self.songoptions.update_draw(self.song_seconds, self.song_length)
             self.update(stdscr)
     def play(self):
@@ -105,32 +107,32 @@ class Player:
                 self.start_next_song()
 
         key = stdscr.getch()
-        if key == ord(" "):
+        if key == CONFIG["playpause_key"]:
             self.playpause()
-        if key == ord("q"):
+        if key == CONFIG["exit_key"]:
             sys.exit(0)
-        if key == ord(">"):
+        if key == CONFIG["next_key"]:
             self.start_next_song()
-        if key == ord("<"):
+        if key == CONFIG["previous_key"]:
             self.start_previous_song()
 
-        jump_time_seconds = 10
-        if key == curses.KEY_LEFT:
+        jump_time_seconds = float(CONFIG["jump_time_seconds"])
+        if key == CONFIG["jump_backward_key"]:
             pygame.mixer.music.set_pos(
                     not_bellow_zero(self.song_seconds-jump_time_seconds)
                     )
             self.song_seconds = not_bellow_zero(self.song_seconds-jump_time_seconds)
-        if key == curses.KEY_RIGHT:
+        if key == CONFIG["jump_forward_key"]:
             pygame.mixer.music.set_pos(
                     not_bellow_zero(self.song_seconds+jump_time_seconds)
                     )
             self.song_seconds += jump_time_seconds
-        if key == curses.KEY_UP:
+        if key == CONFIG["volume_up_key"]:
             self.increment_volume(0.05)
-        if key == curses.KEY_DOWN:
+        if key == CONFIG["volume_down_key"]:
             self.decrement_volume(0.05)
 
-        if key == ord("s"):
+        if key == CONFIG["shuffle_key"]:
             self.shuffled_playlist()
 
 

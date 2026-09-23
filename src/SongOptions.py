@@ -7,11 +7,8 @@ def mk_playback_string(song_played_back, total_song_length, playback_length):
     return f"{format_seconds(int(song_played_back))}/{format_seconds(int(total_song_length))}"[0:playback_length]
 
 class SongOptions:
-    def __init__(self, currently_playing:str, is_paused:bool, is_namescrolling:bool,
-                 width: int, height: int, parrent_rows: int, parrent_cols: int) -> None:
-        self.window = curses.newwin(height, width, int(parrent_rows / 2 - (height / 2)),int(parrent_cols / 2 - (width /  2))) 
+    def calculate_dimensions(self, width, height, parrent_rows, parrent_cols):
         self.playback_y = height // 2
-        self.playback_string = ""
         self.playback_length = width
         self.song_name_y = self.playback_y - 1
         self.song_name_length = width
@@ -21,7 +18,13 @@ class SongOptions:
         self.control_field_x = self.song_name_x 
         self.control_field_length = width
         self.stop_button_x = self.control_field_length / 2
+        self.window = curses.newwin(height, width, int(parrent_rows / 2 - (height / 2)),int(parrent_cols / 2 - (width /  2))) 
 
+
+    def __init__(self, currently_playing:str, is_paused:bool, is_namescrolling:bool,
+                 width: int, height: int, parrent_rows: int, parrent_cols: int) -> None:
+        self.calculate_dimensions(width, height, parrent_rows, parrent_cols)
+        self.playback_string = ""
         self.current_song_name_index = self.song_name_length
         self.is_namescrolling = is_namescrolling
 
