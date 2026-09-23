@@ -16,7 +16,7 @@ from dbus_next.constants import PropertyAccess
 from dbus_next.service import ServiceInterface, dbus_property, method
 
 
-BUS_NAME = "org.mpris.MediaPlayer2.myplayer"
+BUS_NAME = "org.mpris.MediaPlayer2.potstein"
 OBJECT_PATH = "/org/mpris/MediaPlayer2"
 
 
@@ -30,11 +30,11 @@ class MediaPlayer2(ServiceInterface):
 
     @dbus_property(access=PropertyAccess.READ)
     def Identity(self) -> "s":
-        return "myplayer"
+        return "potstein"
 
     @dbus_property(access=PropertyAccess.READ)
     def DesktopEntry(self) -> "s":
-        return "myplayer"
+        return "potstein"
 
     @dbus_property(access=PropertyAccess.READ)
     def CanQuit(self) -> "b":

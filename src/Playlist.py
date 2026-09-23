@@ -5,6 +5,7 @@ import os
 from typing import Any, List, Callable, Set
 import random
 from Song_Cache import Song_Cache, STANDARD_FILE_EXTENSION
+from config import CONFIG
 @dataclass(frozen=True)
 class Song:
     file_path: str
@@ -42,7 +43,7 @@ def shuffle(sequence: list[Any]) :
 @dataclass(frozen=True)
 class Playlist_fetcher:
     songs_path: str
-    music_extensions: list[str] = field(default_factory=lambda: list(set([STANDARD_FILE_EXTENSION, ".mp3", ".mp4", ".opus", ".mkv"])))
+    music_extensions: list[str] = field(default_factory=lambda: CONFIG["additional_file_extensions"] + list(set([STANDARD_FILE_EXTENSION])))
     def song_list(self):
         # get realpath, get .opus as songs, create songlist
         real_songs_path: str = os.path.realpath(self.songs_path)

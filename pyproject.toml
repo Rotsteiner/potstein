@@ -1,0 +1,16 @@
+[project]
+name = "potstein"
+version = "0.0.1"
+description = "simple music player"
+
+# define any Python dependencies
+dependencies = [
+  "pygame",
+  "ffmpeg-python",
+  "dbus-next",
+]
+
+# define the CLI executable
+# Here, we define the entry point to be the 'main()' function in the module 'app/main.py'
+[project.scripts]
+cli = "main:main"

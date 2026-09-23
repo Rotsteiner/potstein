@@ -8,6 +8,7 @@ import shutil
 import ffmpeg
 from typing import Callable, Self
 import multiprocessing 
+from config import CONFIG
 
 STANDARD_FILE_EXTENSION: str = ".ogg"
 is_standard_filetype: Callable[[str],bool] = lambda file_path: \

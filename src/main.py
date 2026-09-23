@@ -1,4 +1,3 @@
-
 import curses
 import time
 from curses.textpad import rectangle
@@ -157,7 +156,9 @@ class Player:
     def run(self):
         render_func = self.init_scr_context
         curses.wrapper(render_func)
-   
-if __name__ == "__main__":
+  
+def main():
     p = Player()
     p.run()
+if __name__ == "__main__":
+    main()
