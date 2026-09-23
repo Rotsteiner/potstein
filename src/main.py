@@ -13,6 +13,7 @@ not_bellow_zero = lambda x: x if x >= 0 else 0
 class Player:
     def __init__(self) -> None:
         pygame.mixer.init()
+        self.last_screen_size = (0,0)
         self.songoptions_width = 19
         self.songoptions_height = 10
         self.running = True
@@ -61,7 +62,7 @@ class Player:
         stdscr.nodelay(True)
         stdscr.keypad(True)
 
-        self.lines, self.cols = stdscr.getyx()
+        self.lines, self.cols = stdscr.getmaxyx()
         self.init_songoptions()
         self.render(stdscr, )
 
@@ -76,7 +77,11 @@ class Player:
         self.update(stdscr)
         #stdscr.clear()
         while self.running:
-            self.songoptions.calculate_dimensions(self.songoptions_width, self.songoptions_height, *(stdscr.getmaxyx()))
+            new_screen_size = stdscr.getmaxyx()
+            if self.last_screen_size != new_screen_size:
+                stdscr.clear()
+                self.last_screen_size = new_screen_size
+            self.songoptions.calculate_dimensions(self.songoptions_width, self.songoptions_height, *(new_screen_size))
             self.songoptions.update_draw(self.song_seconds, self.song_length)
             self.update(stdscr)
     def play(self):
@@ -98,7 +103,6 @@ class Player:
         delta_time: float = 0
         start_time: float = time.time()
 
-        self.lines, self.cols = stdscr.getyx()
         #stdscr.refresh()
         if not self.song_is_paused:
             if not (self.song_seconds >= self.song_length):
