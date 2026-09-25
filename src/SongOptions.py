@@ -37,7 +37,11 @@ class SongOptions:
         self.playback_string = f"{format_seconds(int(song_played_back))}/{format_seconds(int(total_song_length))}"[0:self.playback_length]
         self.current_song_slice = self.currently_playing[0+int(self.current_song_name_index):self.song_name_length+int(self.current_song_name_index)]
         if self.is_namescrolling or force_redraw:
-            self.window.clear()
+            if force_redraw:
+                self.window.clear()
+            else:
+                clear_currently_playing_field = lambda : self.window.addnstr(self.song_name_y, self.song_name_x, " " * len(self.current_song_slice),self.song_name_length)
+                clear_currently_playing_field()
             self.draw()
             self.window.refresh()
             self.current_song_name_index += 0.05 * int(self.is_namescrolling)
