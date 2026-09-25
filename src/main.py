@@ -1,6 +1,7 @@
 import curses
 import time
 from curses.textpad import rectangle
+from typing import Callable
 from SongOptions import *
 import pygame
 import sys
@@ -9,7 +10,8 @@ from Song_Cache import Song_Cache
 Song_Cache(".")
 import Playlist
 from config import CONFIG
-not_bellow_zero = lambda x: x if x >= 0 else 0
+type number = int | float
+not_bellow_zero: Callable[[number], number] = lambda x: x if x >= 0 else 0
 class Player:
     def __init__(self) -> None:
         pygame.mixer.init()
@@ -55,8 +57,9 @@ class Player:
         if self.song_is_paused:
             pygame.mixer.music.pause()
     def init_songoptions(self,):
-        self.songoptions = SongOptions(self.playlist.current.name
-                                       ,self.song_is_paused, not self.song_is_paused,self.songoptions_width,self.songoptions_height,curses.LINES, curses.COLS)
+        self.songoptions: SongOptions = SongOptions(self.playlist.current.name
+                                       ,self.song_is_paused, not self.song_is_paused,self.songoptions_width,
+                                       self.songoptions_height,curses.LINES, curses.COLS)
     def init_scr_context(self, stdscr: curses.window):
         self.init_curses()
         stdscr.nodelay(True)
@@ -72,6 +75,11 @@ class Player:
 
     def shuffled_playlist(self):
         self.load_playlist(Playlist.Playlist_Factory.New_Shuffled(self.playlist_path))
+
+    def do_if_paused(self, func: Callable[[], None]):
+        if self.song_is_paused:
+            func()
+
 
     def render(self, stdscr:curses.window, ):
         self.update(stdscr)
@@ -126,11 +134,17 @@ class Player:
                     not_bellow_zero(self.song_seconds-jump_time_seconds)
                     )
             self.song_seconds = not_bellow_zero(self.song_seconds-jump_time_seconds)
+            self.do_if_paused(lambda: 
+                self.songoptions.update_draw(self.song_seconds, self.song_length, force_redraw=True))
         if key == CONFIG["jump_forward_key"]:
             pygame.mixer.music.set_pos(
                     not_bellow_zero(self.song_seconds+jump_time_seconds)
                     )
             self.song_seconds += jump_time_seconds
+
+            self.do_if_paused(lambda: 
+                self.songoptions.update_draw(self.song_seconds, self.song_length, force_redraw=True))
+
         if key == CONFIG["volume_up_key"]:
             self.increment_volume(0.05)
         if key == CONFIG["volume_down_key"]:
