@@ -25,9 +25,9 @@ class Player:
             Playlist.Playlist_Factory.New_Sorted(self.playlist_path)
         self.volume = 1
         self.init_pygame_song()
-
-        from dbus_mpris import mpris_dbus_start
-        mpris_dbus_start(self)
+        if CONFIG["dbus_integration"]:
+            from dbus_mpris import mpris_dbus_start
+            mpris_dbus_start(self)
     def set_volume(self, value):
         if value < 0:
             raise ValueError("Volume cannot be less than zero")
@@ -105,8 +105,7 @@ class Player:
             self.play()
         else: 
             self.stop()
-
-
+    
     def update(self, stdscr: curses.window):
         delta_time: float = 0
         start_time: float = time.time()
@@ -119,43 +118,45 @@ class Player:
                 self.start_next_song()
 
         key = stdscr.getch()
-        if key == CONFIG["playpause_key"]:
+        if key == CONFIG["keys"]["playpause_key"]:
             self.playpause()
-        if key == CONFIG["exit_key"]:
+        if key == CONFIG["keys"]["exit_key"]:
             sys.exit(0)
-        if key == CONFIG["next_key"]:
+        if key == CONFIG["keys"]["next_key"]:
             self.start_next_song()
-        if key == CONFIG["previous_key"]:
+        if key == CONFIG["keys"]["previous_key"]:
             self.start_previous_song()
 
         jump_time_seconds = float(CONFIG["jump_time_seconds"])
-        if key == CONFIG["jump_backward_key"]:
+        if key == CONFIG["keys"]["jump_backward_key"]:
             pygame.mixer.music.set_pos(
                     not_bellow_zero(self.song_seconds-jump_time_seconds)
                     )
             self.song_seconds = not_bellow_zero(self.song_seconds-jump_time_seconds)
             self.do_if_paused(lambda: 
                 self.songoptions.update_draw(self.song_seconds, self.song_length, force_redraw=True))
-        if key == CONFIG["jump_forward_key"]:
-            pygame.mixer.music.set_pos(
-                    not_bellow_zero(self.song_seconds+jump_time_seconds)
-                    )
+        if key == CONFIG["keys"]["jump_forward_key"]:
+            new_song_pos = not_bellow_zero(self.song_seconds+jump_time_seconds)
+            if new_song_pos > self.song_length:
+                self.start_next_song()
+            else:
+                pygame.mixer.music.set_pos(new_song_pos)
             self.song_seconds += jump_time_seconds
 
             self.do_if_paused(lambda: 
                 self.songoptions.update_draw(self.song_seconds, self.song_length, force_redraw=True))
 
-        if key == CONFIG["volume_up_key"]:
+        if key == CONFIG["keys"]["volume_up_key"]:
             self.increment_volume(0.05)
-        if key == CONFIG["volume_down_key"]:
+        if key == CONFIG["keys"]["volume_down_key"]:
             self.decrement_volume(0.05)
 
-        if key == CONFIG["shuffle_key"]:
+        if key == CONFIG["keys"]["shuffle_key"]:
             self.shuffled_playlist()
 
 
 
-        delta_time: float = time.time() - start_time
+        delta_time = time.time() - start_time
 
         time.sleep(not_bellow_zero(1/30 - delta_time))
 
