@@ -2,6 +2,7 @@ import curses
 import time
 from curses.textpad import rectangle
 from typing import Callable
+from PlaylistManagerUI import PlaylistManagerUI
 from SongOptions import *
 import pygame
 import sys
@@ -60,6 +61,9 @@ class Player:
         self.songoptions: SongOptions = SongOptions(self.playlist.current.name
                                        ,self.song_is_paused, not self.song_is_paused,self.songoptions_width,
                                        self.songoptions_height,curses.LINES, curses.COLS)
+    def init_playlistmanagerui(self):
+        self.playlistmanagerui = PlaylistManagerUI(curses.LINES, curses.COLS, self.playlist)
+
     def init_scr_context(self, stdscr: curses.window):
         self.init_curses()
         stdscr.nodelay(True)
@@ -67,6 +71,7 @@ class Player:
 
         self.lines, self.cols = stdscr.getmaxyx()
         self.init_songoptions()
+        self.init_playlistmanagerui()
         self.render(stdscr, )
 
     def load_playlist(self, playlist: Playlist.Playlist):
@@ -91,6 +96,7 @@ class Player:
                 self.last_screen_size = new_screen_size
             self.songoptions.calculate_dimensions(self.songoptions_width, self.songoptions_height, *(new_screen_size))
             self.songoptions.update_draw(self.song_seconds, self.song_length)
+            #self.playlistmanagerui.update_draw(self.song_seconds, self.song_length)
             self.update(stdscr)
     def play(self):
         self.songoptions.resume()

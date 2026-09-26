@@ -17,3 +17,4 @@ class PlaylistManagerUI(UI):
             self.window.clear()
         for i in range(len(self.playlist.songs)):
             self.window.addnstr(i, 0, self.playlist.songs[i].name, self.parrent_cols)
+        self.window.refresh()
