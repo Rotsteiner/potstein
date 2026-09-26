@@ -15,7 +15,6 @@ class PlaylistManagerUI(UI):
         if AppState().state.value != AppStates.playlistmanagerui.value:
             return
 
-        self.window: curses.window = curses.newwin(parrent_rows, parrent_cols, 0,0) 
         page: int = playlist.index // parrent_rows
         for i in range(len(playlist.songs)):
             if i < parrent_rows:

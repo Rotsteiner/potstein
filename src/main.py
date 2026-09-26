@@ -95,8 +95,7 @@ class Player:
             if self.last_screen_size != new_screen_size:
                 stdscr.clear()
                 self.last_screen_size = new_screen_size
-
-            self.songoptions.calculate_dimensions(self.songoptions_width, self.songoptions_height, *(new_screen_size))
+                self.songoptions.calculate_dimensions(self.songoptions_width, self.songoptions_height, *(new_screen_size))
             self.songoptions.update_draw(self.song_seconds, self.song_length)
             self.playlistmanagerui.update_draw(self.playlist,curses.COLS, curses.LINES)
 
