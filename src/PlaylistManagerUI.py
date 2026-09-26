@@ -20,7 +20,7 @@ class PlaylistManagerUI(UI):
             if i < parrent_rows:
                 playlist_index = page*parrent_rows + i
                 if playlist_index < len(playlist.songs):
-                    self.window.addnstr(i, 0, playlist.songs[playlist_index].name, parrent_cols, curses.A_REVERSE if i == (playlist.index%parrent_rows) else curses.A_NORMAL)
+                    self.window.addnstr(i, 0, playlist.songs[playlist_index].name[0:parrent_cols], parrent_cols, curses.A_REVERSE if i == (playlist.index%parrent_rows) else curses.A_NORMAL)
         self.window.refresh()
     def clear(self):
         self.window.clear()
