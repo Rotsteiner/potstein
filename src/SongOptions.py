@@ -45,7 +45,7 @@ class SongOptions(UI):
             if force_redraw and AppState().state.value == AppStates.SongOptions.value:
                 self.window.clear()
             else:
-                clear_currently_playing_field = lambda : self.window.addnstr(self.song_name_y, self.song_name_x, " " * len(self.current_song_slice),self.song_name_length)
+                clear_currently_playing_field = lambda : self.window.addnstr(self.song_name_y, self.song_name_x, " " * (1+len(self.current_song_slice)),self.song_name_length)
 
                 if AppState().state.value == AppStates.SongOptions.value:
                     clear_currently_playing_field()
@@ -61,12 +61,12 @@ class SongOptions(UI):
         self.window.addnstr(self.song_name_y, self.song_name_x, self.current_song_slice,self.song_name_length)
         # currently playing
 
-        self.window.addstr(self.playback_y, self.playback_length // 2 - len(self.playback_string) // 2,
-                            self.playback_string,)
+        self.window.addnstr(self.playback_y, self.playback_length // 2 - len(self.playback_string) // 2,
+                            self.playback_string,len(self.playback_string))
 
-        self.window.addstr(self.control_field_y, 0, "<")
-        self.window.addstr(self.control_field_y,
-                           self.control_field_length-1, ">")
+        self.window.addnstr(self.control_field_y, 0, "<", 1)
+        self.window.addnstr(self.control_field_y,
+                           self.control_field_length-1, ">", 1)
         pause_icon =  ""
         resume_icon = "󰐊"
         self.window.addstr(self.control_field_y, int(self.stop_button_x), resume_icon if self.is_paused else pause_icon if not self.is_paused else "--")
