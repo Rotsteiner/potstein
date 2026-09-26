@@ -1,28 +1,32 @@
 import curses
-def format_seconds(seconds):
+from typing import override
+from Common import number
+from UI import UI
+def format_seconds(seconds: number):
     minutes,seconds = divmod(seconds, 60)
     return f"{minutes}:{seconds:02}"
 
-def mk_playback_string(song_played_back, total_song_length, playback_length):
-    return f"{format_seconds(int(song_played_back))}/{format_seconds(int(total_song_length))}"[0:playback_length]
+def mk_playback_string(song_played_back: number, total_song_length: number, playback_length: int):
+    return f"{format_seconds(int(song_played_back))}/{format_seconds(int(total_song_length))}"[0:int(playback_length)]
 
-class SongOptions:
-    def calculate_dimensions(self, width, height, parrent_rows, parrent_cols):
-        self.playback_y = height // 2
-        self.playback_length = width
-        self.song_name_y = self.playback_y - 1
-        self.song_name_length = width
-        self.song_name_x = width // 2 - self.song_name_length // 2
+class SongOptions(UI):
+    def calculate_dimensions(self, width: int, height: int, parrent_rows: int, parrent_cols: int):
+        self.playback_y: int = height // 2
+        self.playback_length: int = width
+        self.song_name_y: int = self.playback_y - 1
+        self.song_name_length: int = width
+        self.song_name_x: int = width // 2 - self.song_name_length // 2
 
-        self.control_field_y = height - self.playback_y + 1
-        self.control_field_x = self.song_name_x 
-        self.control_field_length = width
-        self.stop_button_x = self.control_field_length / 2
-        self.window = curses.newwin(height, width, int(parrent_rows / 2 - (height / 2)),int(parrent_cols / 2 - (width /  2))) 
+        self.control_field_y: int = height - self.playback_y + 1
+        self.control_field_x: int = self.song_name_x 
+        self.control_field_length: int = width
+        self.stop_button_x: int = int(self.control_field_length / 2)
+        self.window: curses.window = curses.newwin(height, width, int(parrent_rows / 2 - (height / 2)),int(parrent_cols / 2 - (width /  2))) 
 
 
     def __init__(self, currently_playing:str, is_paused:bool, is_namescrolling:bool,
                  width: int, height: int, parrent_rows: int, parrent_cols: int) -> None:
+        super().__init__()
         self.calculate_dimensions(width, height, parrent_rows, parrent_cols)
         self.playback_string = ""
         self.current_song_name_index = self.song_name_length
@@ -33,6 +37,7 @@ class SongOptions:
         self.current_song_slice = self.currently_playing[0+self.current_song_name_index:self.song_name_length+self.current_song_name_index]
         self.is_paused = is_paused
         self.draw()
+    @override
     def update_draw(self, song_played_back, total_song_length, force_redraw=False):
         self.playback_string = f"{format_seconds(int(song_played_back))}/{format_seconds(int(total_song_length))}"[0:self.playback_length]
         self.current_song_slice = self.currently_playing[0+int(self.current_song_name_index):self.song_name_length+int(self.current_song_name_index)]
