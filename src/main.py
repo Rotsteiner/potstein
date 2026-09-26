@@ -11,8 +11,9 @@ from Song_Cache import Song_Cache
 Song_Cache(".")
 import Playlist
 from config import CONFIG
-type number = int | float
-not_bellow_zero: Callable[[number], number] = lambda x: x if x >= 0 else 0
+from Common import not_bellow_zero
+from AppState import AppState, AppStates
+AppState()
 class Player:
     def __init__(self) -> None:
         pygame.mixer.init()
@@ -94,9 +95,11 @@ class Player:
             if self.last_screen_size != new_screen_size:
                 stdscr.clear()
                 self.last_screen_size = new_screen_size
+
             self.songoptions.calculate_dimensions(self.songoptions_width, self.songoptions_height, *(new_screen_size))
             self.songoptions.update_draw(self.song_seconds, self.song_length)
-            #self.playlistmanagerui.update_draw(self.song_seconds, self.song_length)
+            self.playlistmanagerui.update_draw(self.playlist,curses.COLS, curses.LINES)
+
             self.update(stdscr)
     def play(self):
         self.songoptions.resume()
@@ -106,24 +109,15 @@ class Player:
         self.songoptions.pause()
         self.song_is_paused = True 
         pygame.mixer.music.pause()
+    def pause(self):
+        self.stop()
     def playpause(self):
         if self.song_is_paused:
             self.play()
         else: 
-            self.stop()
+            self.pause()
     
-    def update(self, stdscr: curses.window):
-        delta_time: float = 0
-        start_time: float = time.time()
-
-        #stdscr.refresh()
-        if not self.song_is_paused:
-            if not (self.song_seconds >= self.song_length):
-                self.song_seconds += not_bellow_zero(1/30 - delta_time)
-            else:
-                self.start_next_song()
-
-        key = stdscr.getch()
+    def SongOptions_state_input(self, key: int):
         if key == CONFIG["keys"]["playpause_key"]:
             self.playpause()
         if key == CONFIG["keys"]["exit_key"]:
@@ -159,9 +153,37 @@ class Player:
 
         if key == CONFIG["keys"]["shuffle_key"]:
             self.shuffled_playlist()
+        if key == ord("p"):
+            AppState().set(AppStates.playlistmanagerui)
+            self.songoptions.clear()
+    def PlaylistManagerUI_state_input(self, key: int):
+        if key == ord("p"):
+            AppState().set(AppStates.SongOptions)
+            self.playlistmanagerui.clear()
+            self.songoptions.forced_redraw()
+    def input(self, key: int):
+        if AppState().state.value == AppStates.SongOptions.value:
+            self.SongOptions_state_input(key=key)
+            return
+        if AppState().state.value == AppStates.playlistmanagerui.value:
+            self.PlaylistManagerUI_state_input(key=key)
+            return
 
 
+    def update(self, stdscr: curses.window):
+        delta_time: float = 0
+        start_time: float = time.time()
 
+        #stdscr.refresh()
+        if not self.song_is_paused:
+            if not (self.song_seconds >= self.song_length):
+                self.song_seconds += not_bellow_zero(1/30 - delta_time)
+            else:
+                self.start_next_song()
+
+        key = stdscr.getch()
+        self.input(key)
+ 
         delta_time = time.time() - start_time
 
         time.sleep(not_bellow_zero(1/30 - delta_time))
@@ -170,7 +192,7 @@ class Player:
         self.init_songoptions()
         self.init_pygame_song()
         self.songoptions.update_draw(self.song_seconds,
-                                     self.song_length,force_redraw=True)
+                                         self.song_length,force_redraw=True)
         self.songoptions.forced_redraw()
 
     def start_next_song(self):

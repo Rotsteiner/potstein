@@ -69,6 +69,9 @@ class Playlist:
     @cached_property
     def current(self):
         return self.songs[self._index%len(self.songs)]
+    @property
+    def index(self):
+        return self._index%len(self.songs)
 
 @dataclass(frozen=True)
 class Playlist_Factory: 

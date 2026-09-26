@@ -2,6 +2,7 @@ import curses
 from typing import override
 from Common import number
 from UI import UI
+from AppState import AppState, AppStates
 def format_seconds(seconds: number):
     minutes,seconds = divmod(seconds, 60)
     return f"{minutes}:{seconds:02}"
@@ -37,23 +38,26 @@ class SongOptions(UI):
         self.current_song_slice = self.currently_playing[0+self.current_song_name_index:self.song_name_length+self.current_song_name_index]
         self.is_paused = is_paused
         self.draw()
-    @override
     def update_draw(self, song_played_back, total_song_length, force_redraw=False):
         self.playback_string = f"{format_seconds(int(song_played_back))}/{format_seconds(int(total_song_length))}"[0:self.playback_length]
         self.current_song_slice = self.currently_playing[0+int(self.current_song_name_index):self.song_name_length+int(self.current_song_name_index)]
         if self.is_namescrolling or force_redraw:
-            if force_redraw:
+            if force_redraw and AppState().state.value == AppStates.SongOptions.value:
                 self.window.clear()
             else:
                 clear_currently_playing_field = lambda : self.window.addnstr(self.song_name_y, self.song_name_x, " " * len(self.current_song_slice),self.song_name_length)
-                clear_currently_playing_field()
-            self.draw()
-            self.window.refresh()
+
+                if AppState().state.value == AppStates.SongOptions.value:
+                    clear_currently_playing_field()
+                    self.draw()
+                    self.window.refresh()
             self.current_song_name_index += 0.05 * int(self.is_namescrolling)
             if self.current_song_name_index > len(self.currently_playing):
                 self.current_song_name_index = 0
 
     def draw(self):
+        if AppState().state.value != AppStates.SongOptions.value:
+            return
         self.window.addnstr(self.song_name_y, self.song_name_x, self.current_song_slice,self.song_name_length)
         # currently playing
 
@@ -68,6 +72,8 @@ class SongOptions(UI):
         self.window.addstr(self.control_field_y, int(self.stop_button_x), resume_icon if self.is_paused else pause_icon if not self.is_paused else "--")
         # centered
     def forced_redraw(self):
+        if AppState().state.value != AppStates.SongOptions.value:
+            return
         self.window.clear()
         self.draw()
         self.window.refresh()
@@ -81,6 +87,9 @@ class SongOptions(UI):
         self.is_paused = False 
         self.is_namescrolling = True 
         self.forced_redraw()
+    def clear(self):
+        self.window.clear()
+        self.window.refresh()
 
 
 
