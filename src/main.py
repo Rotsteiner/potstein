@@ -118,6 +118,15 @@ class Player:
             self.pause()
     
     def SongOptions_state_input(self, key: int):
+        if key == CONFIG["keys"]["playlistmanageruiswitch_key"]:
+            AppState().set(AppStates.playlistmanagerui)
+            self.songoptions.clear()
+    def PlaylistManagerUI_state_input(self, key: int):
+        if key == CONFIG["keys"]["playlistmanageruiswitch_key"]:
+            AppState().set(AppStates.SongOptions)
+            self.playlistmanagerui.clear()
+            self.songoptions.forced_redraw()
+    def input(self, key: int):
         if key == CONFIG["keys"]["playpause_key"]:
             self.playpause()
         if key == CONFIG["keys"]["exit_key"]:
@@ -153,15 +162,7 @@ class Player:
 
         if key == CONFIG["keys"]["shuffle_key"]:
             self.shuffled_playlist()
-        if key == ord("p"):
-            AppState().set(AppStates.playlistmanagerui)
-            self.songoptions.clear()
-    def PlaylistManagerUI_state_input(self, key: int):
-        if key == ord("p"):
-            AppState().set(AppStates.SongOptions)
-            self.playlistmanagerui.clear()
-            self.songoptions.forced_redraw()
-    def input(self, key: int):
+
         if AppState().state.value == AppStates.SongOptions.value:
             self.SongOptions_state_input(key=key)
             return

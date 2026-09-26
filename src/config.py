@@ -10,6 +10,7 @@ class Keys(TypedDict):
     volume_up_key: int
     volume_down_key: int
     shuffle_key: int 
+    playlistmanageruiswitch_key: int
 class Config(TypedDict):
     additional_file_extensions: list[str]
     keys: Keys
@@ -27,7 +28,8 @@ CONFIG: Config = {
         "jump_forward_key" : curses.KEY_RIGHT,
         "volume_up_key" :  curses.KEY_UP,
         "volume_down_key":  curses.KEY_DOWN,
-        "shuffle_key" : ord("s")
+        "shuffle_key" : ord("s"),
+        "playlistmanageruiswitch_key": ord("p")
         },
     "jump_time_seconds" : 10.0,
     "dbus_integration": True
