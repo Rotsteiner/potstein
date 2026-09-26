@@ -194,6 +194,7 @@ class Player:
         self.songoptions.update_draw(self.song_seconds,
                                          self.song_length,force_redraw=True)
         self.songoptions.forced_redraw()
+        self.playlistmanagerui.forced_redraw()
 
     def start_next_song(self):
         self.playlist = self.playlist.next
