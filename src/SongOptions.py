@@ -45,7 +45,7 @@ class SongOptions(UI):
             if force_redraw and AppState().state.value == AppStates.SongOptions.value:
                 self.window.clear()
             else:
-                clear_currently_playing_field = lambda : self.window.addnstr(self.song_name_y, self.song_name_x, " " * (len(self.current_song_slice)),len(self.current_song_slice))
+                clear_currently_playing_field = lambda : self.window.addnstr(self.song_name_y, self.song_name_x, " " * (len(self.current_song_slice)+1),1+len(self.current_song_slice))
 
                 if AppState().state.value == AppStates.SongOptions.value:
                     clear_currently_playing_field()
