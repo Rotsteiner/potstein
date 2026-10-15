@@ -1,3 +1,4 @@
+import cli
 import curses
 import time
 from curses.textpad import rectangle
@@ -22,7 +23,7 @@ class Player:
         self.songoptions_height = 10
         self.running = True
         self.song_is_paused = False
-        self.playlist_path = sys.argv[1]
+        self.playlist_path: str = cli.COMMAND_LINE_ARGS.playlistpath
         self.playlist: Playlist.Playlist = \
             Playlist.Playlist_Factory.New_Sorted(self.playlist_path)
         self.volume = 1
