@@ -1,5 +1,6 @@
 import curses
 import os
+import sys
 from typing import TypedDict
 from cli import COMMAND_LINE_ARGS
 class Keys(TypedDict):
@@ -58,7 +59,11 @@ def new_config(default: Config, overrides) -> Config:
     the value of each key.
     """
     old_config = default.copy()
-    apply_overrides(old_config, overrides)
+    try:
+        apply_overrides(old_config, overrides)
+    except:
+        print("Could not load user config, perhaps your dictionary is in the wrong or outdated format ?", file=sys.stderr)
+        sys.exit(1)
     return old_config
 
 
