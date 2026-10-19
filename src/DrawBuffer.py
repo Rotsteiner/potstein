@@ -3,6 +3,7 @@ import curses
 from curses import window, wrapper
 from dataclasses import dataclass, field
 from shutil import move
+import sys
 import time
 from typing import override
 @dataclass(frozen=True)
@@ -81,7 +82,10 @@ class DrawBuffer:
                 if (self._fb.get_at_yx(y,x) != self._newfb.get_at_yx(y,x)):
                     # not the same -> actual scr needs updating
                     self._scr.move(y,x)
-                    self._scr.addch(self._newfb.get_at_yx(y,x).char, self._newfb.get_at_yx(y,x).attribute) # override old one 
+                    try:
+                        self._scr.addch(self._newfb.get_at_yx(y,x).char, self._newfb.get_at_yx(y,x).attribute) # override old one 
+                    except curses.error as ce:
+                        print(ce, file=sys.stderr)
 
 
 

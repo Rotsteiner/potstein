@@ -110,6 +110,8 @@ class Player:
                 stdscr.refresh()
                 self.songoptions.draw(lazy=False)
                 self.playlistmanagerui.draw(self.playlist, lazy=False)
+
+
             self.songoptions.draw()
             self.playlistmanagerui.draw(self.playlist)
 
