@@ -101,13 +101,17 @@ class Player:
             if self.last_screen_size != new_screen_size:
                 #stdscr.clear()
                 stdfb = DrawBuffer(stdscr)
+
                 self.last_screen_size = new_screen_size
+
                 self.songoptions.calculate_dimensions(self.songoptions_width, self.songoptions_height, *(new_screen_size))
+                self.playlistmanagerui.calculate_dimensions(*new_screen_size)
                 stdscr.clear()
                 stdscr.refresh()
                 self.songoptions.draw(lazy=False)
+                self.playlistmanagerui.draw(self.playlist,*new_screen_size, lazy=False)
             self.songoptions.draw()
-            self.playlistmanagerui.update_draw(self.playlist,curses.COLS, curses.LINES)
+            self.playlistmanagerui.draw(self.playlist,curses.COLS, curses.LINES)
 
             self.update(stdfb)
     def play(self):
@@ -130,6 +134,7 @@ class Player:
         if key == CONFIG["keys"]["playlistmanageruiswitch_key"]:
             AppState().set(AppStates.playlistmanagerui)
             self.songoptions.clear()
+            self.playlistmanagerui.draw(self.playlist,curses.COLS, curses.LINES,lazy=False)
     def PlaylistManagerUI_state_input(self, key: int):
         if key == CONFIG["keys"]["playlistmanageruiswitch_key"]:
             AppState().set(AppStates.SongOptions)
@@ -199,8 +204,6 @@ class Player:
     def start_song(self):
         self.init_songoptions()
         self.init_pygame_song()
-        self.songoptions.forced_redraw()
-        self.playlistmanagerui.forced_redraw()
 
     def start_next_song(self):
         self.playlist = self.playlist.next
