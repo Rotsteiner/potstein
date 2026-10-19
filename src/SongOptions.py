@@ -43,7 +43,9 @@ class SongOptions(UI):
         self.draw()
     def new_song(self, currently_playing: str):
         self.current_song_name_index = 0
-        self.currently_playing = currently_playing
+        self.current_song_name_index = self.song_name_length
+        self.currently_playing = " "*self.song_name_length+ currently_playing 
+
     def update(self, song_played_back, total_song_length, force_redraw=False):
         self.playback_string = f"{format_seconds(int(song_played_back))}/{format_seconds(int(total_song_length))}"[0:self.playback_length]
         self.current_song_slice = self.currently_playing[0+int(self.current_song_name_index):self.song_name_length+int(self.current_song_name_index)]
