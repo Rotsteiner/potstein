@@ -109,9 +109,9 @@ class Player:
                 stdscr.clear()
                 stdscr.refresh()
                 self.songoptions.draw(lazy=False)
-                self.playlistmanagerui.draw(self.playlist,*new_screen_size, lazy=False)
+                self.playlistmanagerui.draw(self.playlist, lazy=False)
             self.songoptions.draw()
-            self.playlistmanagerui.draw(self.playlist,curses.COLS, curses.LINES)
+            self.playlistmanagerui.draw(self.playlist)
 
             self.update(stdfb)
     def play(self):
@@ -134,7 +134,7 @@ class Player:
         if key == CONFIG["keys"]["playlistmanageruiswitch_key"]:
             AppState().set(AppStates.playlistmanagerui)
             self.songoptions.clear()
-            self.playlistmanagerui.draw(self.playlist,curses.COLS, curses.LINES,lazy=False)
+            self.playlistmanagerui.draw(self.playlist, lazy=False)
     def PlaylistManagerUI_state_input(self, key: int):
         if key == CONFIG["keys"]["playlistmanageruiswitch_key"]:
             AppState().set(AppStates.SongOptions)
