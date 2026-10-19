@@ -202,7 +202,7 @@ class Player:
         time.sleep(not_bellow_zero(1/30 - delta_time))
 
     def start_song(self):
-        self.init_songoptions()
+        self.songoptions.new_song(self.playlist.current.name)
         self.init_pygame_song()
 
     def start_next_song(self):
