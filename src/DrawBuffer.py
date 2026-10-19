@@ -61,22 +61,30 @@ class DrawBuffer:
             self.addstr(string, attribute)
         else:
             self.addstr(string[:n], attribute)
+    def getch(self)-> int:
+        return self._scr.getch()
         
 
 
     def clear(self):
         self._newfb: CursesFB = CursesFB(*self._scr.getmaxyx()) # changes are first made to this and then checked against the old one
-    def draw(self):
+    def draw(self, lazy: bool = True):
         """
             will only update what has actually changed
             tries to fix flickering
         """
+        if not lazy:
+            self._scr.clear()
+            self._fb = CursesFB(*self._scr.getmaxyx())
         for y in range(self._fb.get_yx()[0]):
             for x in range(self._fb.get_yx()[1]):
-                if self._fb.get_at_yx(y,x) != self._newfb.get_at_yx(y,x):
+                if (self._fb.get_at_yx(y,x) != self._newfb.get_at_yx(y,x)):
                     # not the same -> actual scr needs updating
                     self._scr.move(y,x)
                     self._scr.addch(self._newfb.get_at_yx(y,x).char, self._newfb.get_at_yx(y,x).attribute) # override old one 
+
+
+
         self._scr.move(*self._cursoryx)
         self._scr.refresh() # update screen 
         self._fb = self._newfb.copy() # we have drawn the new one so we need to to reflect that in the tracking

@@ -1,3 +1,4 @@
+from DrawBuffer import DrawBuffer
 import cli
 import curses
 import time
@@ -70,6 +71,7 @@ class Player:
         self.init_curses()
         stdscr.nodelay(True)
         stdscr.keypad(True)
+        stdscr.clear()
 
         self.lines, self.cols = stdscr.getmaxyx()
         self.init_songoptions()
@@ -89,18 +91,25 @@ class Player:
 
 
     def render(self, stdscr:curses.window, ):
-        self.update(stdscr)
-        #stdscr.clear()
+        stdscr.clear()
+        stdfb = DrawBuffer(stdscr)
+        self.update(stdfb)
+
+        self.songoptions.draw(lazy=False)
         while self.running:
             new_screen_size = stdscr.getmaxyx()
             if self.last_screen_size != new_screen_size:
-                stdscr.clear()
+                #stdscr.clear()
+                stdfb = DrawBuffer(stdscr)
                 self.last_screen_size = new_screen_size
                 self.songoptions.calculate_dimensions(self.songoptions_width, self.songoptions_height, *(new_screen_size))
-            self.songoptions.update_draw(self.song_seconds, self.song_length)
+                stdscr.clear()
+                stdscr.refresh()
+                self.songoptions.draw(lazy=False)
+            self.songoptions.draw()
             self.playlistmanagerui.update_draw(self.playlist,curses.COLS, curses.LINES)
 
-            self.update(stdscr)
+            self.update(stdfb)
     def play(self):
         self.songoptions.resume()
         self.song_is_paused = False 
@@ -125,7 +134,7 @@ class Player:
         if key == CONFIG["keys"]["playlistmanageruiswitch_key"]:
             AppState().set(AppStates.SongOptions)
             self.playlistmanagerui.clear()
-            self.songoptions.forced_redraw()
+            self.songoptions.draw(lazy=False)
     def input(self, key: int):
         if key == CONFIG["keys"]["playpause_key"]:
             self.playpause()
@@ -142,8 +151,7 @@ class Player:
                     not_bellow_zero(self.song_seconds-jump_time_seconds)
                     )
             self.song_seconds = not_bellow_zero(self.song_seconds-jump_time_seconds)
-            self.do_if_paused(lambda: 
-                self.songoptions.update_draw(self.song_seconds, self.song_length, force_redraw=True))
+
         if key == CONFIG["keys"]["jump_forward_key"]:
             new_song_pos = not_bellow_zero(self.song_seconds+jump_time_seconds)
             if new_song_pos > self.song_length:
@@ -152,8 +160,6 @@ class Player:
                 pygame.mixer.music.set_pos(new_song_pos)
             self.song_seconds += jump_time_seconds
 
-            self.do_if_paused(lambda: 
-                self.songoptions.update_draw(self.song_seconds, self.song_length, force_redraw=True))
 
         if key == CONFIG["keys"]["volume_up_key"]:
             self.increment_volume(0.05)
@@ -171,7 +177,7 @@ class Player:
             return
 
 
-    def update(self, stdscr: curses.window):
+    def update(self, stdscr: DrawBuffer):
         delta_time: float = 0
         start_time: float = time.time()
 
@@ -186,14 +192,13 @@ class Player:
         self.input(key)
  
         delta_time = time.time() - start_time
+        self.songoptions.update(self.song_seconds, self.song_length)
 
         time.sleep(not_bellow_zero(1/30 - delta_time))
 
     def start_song(self):
         self.init_songoptions()
         self.init_pygame_song()
-        self.songoptions.update_draw(self.song_seconds,
-                                         self.song_length,force_redraw=True)
         self.songoptions.forced_redraw()
         self.playlistmanagerui.forced_redraw()
 
