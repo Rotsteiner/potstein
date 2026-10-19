@@ -1,8 +1,10 @@
+import timeit
 from typing import Callable
 from collections.abc import Iterable
 import random
 import decimal
 import os
+
 
 type number = int | float | decimal.Decimal
 
@@ -23,6 +25,17 @@ listdir_with_file_ending: Callable[[str, list[str]], list[str]] = \
                 lambda item: any([item.endswith(ending) for ending in allowed_endings]), 
                 os.listdir(path)
                 ))
+if __name__ == "__main__":
+    test_value = list(range(1000))
+
+    start = timeit.default_timer()
+    for _ in range(10000):
+        test_value = shuffle(test_value)
+    end = timeit.default_timer()
+    print(f"elapsed: {end-start}")
+
+
+
 
 
 

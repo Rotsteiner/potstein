@@ -8,6 +8,7 @@ dependencies = [
   "pygame",
   "ffmpeg-python",
   "dbus-next",
+  "numba"
 ]
 
 # define the CLI executable

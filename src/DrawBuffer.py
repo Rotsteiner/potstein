@@ -6,6 +6,9 @@ from shutil import move
 import sys
 import time
 from typing import override
+import numpy as np
+
+CursesCharType = np.dtype([("char", np.uint32), ("attribute", np.uint32)]) 
 @dataclass(frozen=True)
 class CursesChar:
     char: str 
@@ -15,22 +18,25 @@ class CursesFB:
     def __init__(self, y: int, x: int) -> None:
         self._y: int = y 
         self._x: int = x
-        self._fb: list[list[CursesChar]] = [ 
-        [CursesChar(" ") for _ in range(x)] for _ in range(y)
-        ]
-    @override
-    def __repr__(self) -> str:
-        return "\n".join(["".join([c.char for c in row]) for row in self._fb])
+        self._fb = np.array([ 
+        [(ord(" "), curses.A_NORMAL) for _ in range(x)] for _ in range(y)
+        ], dtype=CursesCharType)
     def get_yx(self) -> tuple[int, int] :
         return (self._y, self._x)
     def get_at_yx(self, y: int, x: int) -> CursesChar:
+        _fb = self.get_at_yx_CursesCharType(y,x)
+        return CursesChar(chr(_fb[y,x]["char"].item()),_fb[y,x]["attribute"].item())
+
+    def get_at_yx_CursesCharType(self, y: int, x: int) :
         if y > self._y or x > self._x:
             raise ValueError("not inside the buffer")
-        return self._fb[y][x]
+        return self._fb[y,x]
+
     def set_at_yx(self, y: int, x: int, c: CursesChar) -> None:
         if y > self._y or x > self._x:
             raise ValueError("not inside the buffer")
-        self._fb[y][x] = c
+        self._fb[y, x]["char"] = ord(c.char)
+        self._fb[y, x]["attribute"] = c.attribute
     def copy(self):
         new_fb = CursesFB(self._y, self._x)
         new__fb = deepcopy(self._fb)
@@ -79,11 +85,13 @@ class DrawBuffer:
             self._fb = CursesFB(*self._scr.getmaxyx())
         for y in range(self._fb.get_yx()[0]):
             for x in range(self._fb.get_yx()[1]):
-                if (self._fb.get_at_yx(y,x) != self._newfb.get_at_yx(y,x)):
+                new_char = self._newfb.get_at_yx_CursesCharType(y,x)
+                old_char = self._fb.get_at_yx_CursesCharType(y,x)
+                if (old_char["char"] != new_char["char"] or old_char["attribute"] != new_char["attribute"]):
                     # not the same -> actual scr needs updating
                     self._scr.move(y,x)
                     try:
-                        self._scr.addch(self._newfb.get_at_yx(y,x).char, self._newfb.get_at_yx(y,x).attribute) # override old one 
+                        self._scr.addch(chr(new_char["char"].item()), new_char["attribute"].item()) # override old one 
                     except curses.error as ce:
                         print(ce, file=sys.stderr)
 
