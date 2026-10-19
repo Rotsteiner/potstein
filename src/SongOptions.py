@@ -1,4 +1,5 @@
 import curses
+import sys
 from typing import override
 from Common import number
 from DrawBuffer import DrawBuffer
@@ -31,7 +32,7 @@ class SongOptions(UI):
                  width: int, height: int, parrent_rows: int, parrent_cols: int) -> None:
         super().__init__()
         self.calculate_dimensions(width, height, parrent_rows, parrent_cols)
-        self.playback_string = ""
+        self.playback_string = "0:00/0:00"
         self.current_song_name_index = self.song_name_length
         self.is_namescrolling = is_namescrolling
 
@@ -61,8 +62,9 @@ class SongOptions(UI):
         self.fb.addnstryx(self.current_song_slice,self.song_name_length,self.song_name_y, self.song_name_x)
         # currently playing
 
-        self.fb.addnstryx(
-                            self.playback_string,len(self.playback_string), self.playback_y, self.playback_length // 2 - len(self.playback_string) // 2,)
+
+        self.fb.addstryx(
+            self.playback_string , self.playback_y, self.playback_length // 2 - len(self.playback_string) // 2,)
 
         self.fb.addnstryx( "<", 1,self.control_field_y, 0)
         self.fb.addnstryx(">", 1,self.control_field_y, 
