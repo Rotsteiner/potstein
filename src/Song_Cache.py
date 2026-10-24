@@ -27,7 +27,7 @@ def compute_file_hash(file_path, algorithm='sha256'):
 
 class Song_Cache:
     instance: Self | None = None 
-    def init(self, cache_directory_path: str = ".") -> None:
+    def init(self, cache_directory_path: str = CONFIG["song_cache_path"]) -> None:
         self.cache_directory_path: str = realpath(cache_directory_path)
         self.songs: dict[str, str] = {}
         self.song_cache_sub_directory_name = "song_cache"
@@ -37,6 +37,7 @@ class Song_Cache:
             cls.instance = super().__new__(cls)
             cls.instance.init(*args,**kwargs)
         return cls.instance
+
     
     @staticmethod
     def convert(original_file_path: str, final_file_path: str):

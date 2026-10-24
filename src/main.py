@@ -11,11 +11,9 @@ import sys
 import os
 from Song_Cache import Song_Cache
 from config import CONFIG
-Song_Cache(CONFIG["song_cache_path"])
 import Playlist
 from Common import not_bellow_zero
 from AppState import AppState, AppStates
-AppState()
 class Player:
     def __init__(self) -> None:
         pygame.mixer.init()
