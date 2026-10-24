@@ -20,14 +20,14 @@ class Player:
     def __init__(self) -> None:
         pygame.mixer.init()
         self.last_screen_size = (0,0)
-        self.songoptions_width = 19
-        self.songoptions_height = 10
+        self.songoptions_width = CONFIG["ui"]["songoptions_width"]
+        self.songoptions_height = CONFIG["ui"]["songoptions_height"]
         self.running = True
-        self.song_is_paused = False
+        self.song_is_paused = CONFIG["song_paused_at_start"]
         self.playlist_path: str = cli.COMMAND_LINE_ARGS.playlistpath
         self.playlist: Playlist.Playlist = \
             Playlist.Playlist_Factory.New_Sorted(self.playlist_path)
-        self.volume = 1
+        self.volume = CONFIG["default_volume"]
         self.init_pygame_song()
         if CONFIG["dbus_integration"]:
             from dbus_mpris import mpris_dbus_start

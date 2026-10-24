@@ -14,10 +14,16 @@ class Keys(TypedDict):
     volume_down_key: int
     shuffle_key: int 
     playlistmanageruiswitch_key: int
+class UI(TypedDict):
+    songoptions_width: int 
+    songoptions_height: int
 class Config(TypedDict):
     additional_file_extensions: list[str]
     keys: Keys
+    ui: UI
+    song_paused_at_start: bool
     jump_time_seconds: float
+    default_volume: float
     volume_step_size: float
     dbus_integration: bool
 
@@ -35,7 +41,13 @@ default_config: Config = {
             "shuffle_key" : ord("s"),
             "playlistmanageruiswitch_key": ord("p")
             },
+        "ui": {
+            "songoptions_width" : 19,
+            "songoptions_height" : 10,
+            },
+        "song_paused_at_start": False,
         "jump_time_seconds" : 10.0,
+        "default_volume": 1.0,
         "volume_step_size": 0.05,
         "dbus_integration": True
     }
