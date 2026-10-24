@@ -10,9 +10,9 @@ import pygame
 import sys
 import os
 from Song_Cache import Song_Cache
-Song_Cache(".")
-import Playlist
 from config import CONFIG
+Song_Cache(CONFIG["song_cache_path"])
+import Playlist
 from Common import not_bellow_zero
 from AppState import AppState, AppStates
 AppState()
@@ -28,6 +28,7 @@ class Player:
         self.playlist: Playlist.Playlist = \
             Playlist.Playlist_Factory.New_Sorted(self.playlist_path)
         self.volume = CONFIG["default_volume"]
+        AppState().set(CONFIG["default_app_state"])
         self.init_pygame_song()
         if CONFIG["dbus_integration"]:
             from dbus_mpris import mpris_dbus_start

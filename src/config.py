@@ -3,6 +3,7 @@ import os
 import sys
 from typing import TypedDict
 from cli import COMMAND_LINE_ARGS
+import AppState
 class Keys(TypedDict):
     playpause_key: int
     exit_key: int 
@@ -25,6 +26,8 @@ class Config(TypedDict):
     jump_time_seconds: float
     default_volume: float
     volume_step_size: float
+    default_app_state: AppState.AppStates
+    song_cache_path: str
     dbus_integration: bool
 
 default_config: Config = {
@@ -49,6 +52,8 @@ default_config: Config = {
         "jump_time_seconds" : 10.0,
         "default_volume": 1.0,
         "volume_step_size": 0.05,
+        "default_app_state": AppState.AppStates.SongOptions,
+        "song_cache_path": ".",
         "dbus_integration": True
     }
 
