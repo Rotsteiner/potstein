@@ -18,6 +18,7 @@ class Config(TypedDict):
     additional_file_extensions: list[str]
     keys: Keys
     jump_time_seconds: float
+    volume_step_size: float
     dbus_integration: bool
 
 default_config: Config = {
@@ -35,6 +36,7 @@ default_config: Config = {
             "playlistmanageruiswitch_key": ord("p")
             },
         "jump_time_seconds" : 10.0,
+        "volume_step_size": 0.05,
         "dbus_integration": True
     }
 

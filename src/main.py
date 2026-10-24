@@ -169,9 +169,9 @@ class Player:
 
 
         if key == CONFIG["keys"]["volume_up_key"]:
-            self.increment_volume(0.05)
+            self.increment_volume(CONFIG["volume_step_size"])
         if key == CONFIG["keys"]["volume_down_key"]:
-            self.decrement_volume(0.05)
+            self.decrement_volume(CONFIG["volume_step_size"])
 
         if key == CONFIG["keys"]["shuffle_key"]:
             self.shuffled_playlist()
