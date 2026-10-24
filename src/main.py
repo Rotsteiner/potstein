@@ -16,6 +16,7 @@ from Common import not_bellow_zero
 from AppState import AppState, AppStates
 class Player:
     def __init__(self) -> None:
+        Song_Cache(CONFIG["song_cache_path"])
         pygame.mixer.init()
         self.last_screen_size = (0,0)
         self.songoptions_width = CONFIG["ui"]["songoptions_width"]
@@ -27,6 +28,7 @@ class Player:
             Playlist.Playlist_Factory.New_Sorted(self.playlist_path)
         self.volume = CONFIG["default_volume"]
         AppState().set(CONFIG["default_app_state"])
+
         self.init_pygame_song()
         if CONFIG["dbus_integration"]:
             from dbus_mpris import mpris_dbus_start

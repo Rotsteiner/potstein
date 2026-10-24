@@ -27,7 +27,7 @@ def compute_file_hash(file_path, algorithm='sha256'):
 
 class Song_Cache:
     instance: Self | None = None 
-    def init(self, cache_directory_path: str = CONFIG["song_cache_path"]) -> None:
+    def init(self, cache_directory_path: str = ".") -> None:
         self.cache_directory_path: str = realpath(cache_directory_path)
         self.songs: dict[str, str] = {}
         self.song_cache_sub_directory_name = "song_cache"
