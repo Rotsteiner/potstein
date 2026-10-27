@@ -14,6 +14,9 @@ from config import CONFIG
 import Playlist
 from Common import not_bellow_zero
 from AppState import AppState, AppStates
+from cli import COMMAND_LINE_ARGS
+import Debug
+Debug.Debug(file = open(COMMAND_LINE_ARGS.debugfile, "a") if COMMAND_LINE_ARGS.debugfile else CONFIG["debug"]["file"], enabled=CONFIG["debug"]["enable"])
 class Player:
     def __init__(self) -> None:
         Song_Cache(CONFIG["song_cache_path"])
@@ -67,6 +70,8 @@ class Player:
                                        self.songoptions_height,curses.LINES, curses.COLS)
     def init_playlistmanagerui(self):
         self.playlistmanagerui = PlaylistManagerUI(curses.LINES, curses.COLS, self.playlist)
+
+        Debug.Debug().log("Pygame loaded successfully!")
 
     def init_scr_context(self, stdscr: curses.window):
         self.init_curses()

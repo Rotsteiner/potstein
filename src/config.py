@@ -1,7 +1,7 @@
 import curses
 import os
 import sys
-from typing import TypedDict
+from typing import TextIO, TypedDict
 from cli import COMMAND_LINE_ARGS
 import AppState
 class Keys(TypedDict):
@@ -18,10 +18,14 @@ class Keys(TypedDict):
 class UI(TypedDict):
     songoptions_width: int 
     songoptions_height: int
+class Debug(TypedDict):
+    enable: bool
+    file: TextIO
 class Config(TypedDict):
     additional_file_extensions: list[str]
     keys: Keys
     ui: UI
+    debug: Debug
     song_paused_at_start: bool
     jump_time_seconds: float
     default_volume: float
@@ -48,6 +52,10 @@ default_config: Config = {
             "songoptions_width" : 19,
             "songoptions_height" : 10,
             },
+        "debug": {
+            "enable": False,
+            "file": sys.stdout
+        },
         "song_paused_at_start": False,
         "jump_time_seconds" : 10.0,
         "default_volume": 1.0,
