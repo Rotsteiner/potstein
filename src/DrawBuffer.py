@@ -81,6 +81,7 @@ class DrawBuffer:
             will only update what has actually changed
             tries to fix flickering
         """
+        something_changed = False
         if not lazy:
             self._scr.clear()
             self._fb = CursesFB(*self._scr.getmaxyx())
@@ -89,6 +90,7 @@ class DrawBuffer:
                 new_char = self._newfb.get_at_yx_CursesCharType(y,x)
                 old_char = self._fb.get_at_yx_CursesCharType(y,x)
                 if (old_char["char"] != new_char["char"] or old_char["attribute"] != new_char["attribute"]):
+                    something_changed = True
                     # not the same -> actual scr needs updating
                     self._scr.move(y,x)
                     try:
@@ -98,10 +100,10 @@ class DrawBuffer:
                         Debug().log(ce)
 
 
-
         self._scr.move(*self._cursoryx)
         self._scr.refresh() # update screen 
-        self._fb = self._newfb.copy() # we have drawn the new one so we need to to reflect that in the tracking
+        if something_changed or not lazy:
+            self._fb = self._newfb.copy() # we have drawn the new one so we need to to reflect that in the tracking
 
                 
 
