@@ -36,7 +36,7 @@ class CursesFB:
         return CursesChar(chr(_fb[y,x]["char"].item()),_fb[y,x]["attribute"].item())
 
     def get_at_yx_CursesCharType(self, y: int, x: int) :
-        if y > self._y or x > self._x:
+        if y >= self._y or x >= self._x:
             raise ValueError("not inside the buffer")
         return self._fb[y,x]
 
@@ -97,8 +97,12 @@ class DrawBuffer:
             self._fb = CursesFB(*self._scr.getmaxyx())
         for y in range(self._fb.get_yx()[0]):
             for x in range(self._fb.get_yx()[1]):
-                new_char = self._newfb.get_at_yx_CursesCharType(y,x)
-                old_char = self._fb.get_at_yx_CursesCharType(y,x)
+                try:
+                    new_char = self._newfb.get_at_yx_CursesCharType(y,x)
+                    old_char = self._fb.get_at_yx_CursesCharType(y,x)
+                except Exception as e:
+                    Debug().log(e)
+                    return
                 if (old_char["char"] != new_char["char"] or old_char["attribute"] != new_char["attribute"]):
                     something_changed = True
                     # not the same -> actual scr needs updating
