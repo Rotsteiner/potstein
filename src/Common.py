@@ -4,6 +4,7 @@ from collections.abc import Iterable
 import random
 import decimal
 import os
+import numba
 
 
 type number = int | float | decimal.Decimal

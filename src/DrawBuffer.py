@@ -5,7 +5,9 @@ from dataclasses import dataclass, field
 from shutil import move
 import sys
 import time
+import traceback
 from typing import override
+import numba
 import numpy as np
 
 from Debug import Debug
@@ -16,12 +18,17 @@ class CursesChar:
     char: str 
     attribute: int = field(default=curses.A_NORMAL)
 
+def new_fb_matrix(y: int,x: int):
+    _fb = np.full((y,x), ord(" "), dtype=CursesCharType)
+    _fb["attribute"] = curses.A_NORMAL
+    return _fb
+
+
 class CursesFB:
     def __init__(self, y: int, x: int) -> None:
         self._y: int = y 
         self._x: int = x
-        self._fb = np.full((y,x), ord(" "), dtype=CursesCharType)
-        self._fb["attribute"] = curses.A_NORMAL
+        self._fb = new_fb_matrix(y,x)
     def get_yx(self) -> tuple[int, int] :
         return (self._y, self._x)
     def get_at_yx(self, y: int, x: int) -> CursesChar:
@@ -34,7 +41,7 @@ class CursesFB:
         return self._fb[y,x]
 
     def set_at_yx(self, y: int, x: int, c: CursesChar) -> None:
-        if y > self._y or x > self._x:
+        if y >= self._y or x >= self._x:
             raise ValueError("not inside the buffer")
         self._fb[y, x]["char"] = ord(c.char)
         self._fb[y, x]["attribute"] = c.attribute
@@ -51,9 +58,12 @@ class DrawBuffer:
         self._newfb: CursesFB = CursesFB(*scr.getmaxyx()) # changes are first made to this and then checked against the old one
         self._cursoryx: tuple[int, int] = (0,0)
     def addstryx(self, string: str, y: int, x: int, attribute: int = curses.A_NORMAL):
-        for x1 in range(len(string)):
-            self._newfb.set_at_yx(y, x + x1, CursesChar(string[x1], attribute))
-        self._cursoryx = (y,x)
+        try:
+            for x1 in range(len(string)):
+                self._newfb.set_at_yx(y, x + x1, CursesChar(string[x1], attribute))
+            self._cursoryx = (y,x)
+        except Exception as e:
+            Debug().log(e)
     def addnstryx(self, string: str,n:int, y: int, x: int, attribute: int = curses.A_NORMAL):
         if n > len(string):
             self.addstryx(string,y,x, attribute)

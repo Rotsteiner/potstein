@@ -1,10 +1,12 @@
 import curses
 import sys
 from typing import override
+
 from Common import number
 from DrawBuffer import DrawBuffer
 from UI import UI
 from AppState import AppState, AppStates
+
 def format_seconds(seconds: number):
     minutes,seconds = divmod(seconds, 60)
     return f"{minutes}:{seconds:02}"
