@@ -8,7 +8,9 @@ import time
 from typing import override
 import numpy as np
 
-CursesCharType = np.dtype([("char", np.uint32), ("attribute", np.uint32)]) 
+from Debug import Debug
+
+CursesCharType = np.dtype([("char", np.uint32), ("attribute", np.uint32)]) # 8 bytes 
 @dataclass(frozen=True)
 class CursesChar:
     char: str 
@@ -18,9 +20,8 @@ class CursesFB:
     def __init__(self, y: int, x: int) -> None:
         self._y: int = y 
         self._x: int = x
-        self._fb = np.array([ 
-        [(ord(" "), curses.A_NORMAL) for _ in range(x)] for _ in range(y)
-        ], dtype=CursesCharType)
+        self._fb = np.full((y,x), ord(" "), dtype=CursesCharType)
+        self._fb["attribute"] = curses.A_NORMAL
     def get_yx(self) -> tuple[int, int] :
         return (self._y, self._x)
     def get_at_yx(self, y: int, x: int) -> CursesChar:
@@ -94,6 +95,7 @@ class DrawBuffer:
                         self._scr.addch(chr(new_char["char"].item()), new_char["attribute"].item()) # override old one 
                     except curses.error as ce:
                         print(ce, file=sys.stderr)
+                        Debug().log(ce)
 
 
 
